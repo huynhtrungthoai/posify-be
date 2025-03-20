@@ -1,0 +1,47 @@
+{
+    "name": "store-manager-api",
+    "version": "1.0.0",
+    "main": "index.js",
+    "pre-commit": [
+        "ts.check",
+        "build",
+        "add-build"
+    ],
+    "scripts": {
+        "start": "nodemon src/index.ts",
+        "start1": "nodemon --exec ts-node src/index.ts",
+        "build": "rimraf dist && tsc",
+        "ts.check": "tsc --project tsconfig.json",
+        "add-build": "git add dist",
+        "migrate": "rm -rf build && yarn build && yarn typeorm migration:generate ./src/migrations/user -d ./src/dataSource.ts",
+        "db:push": "rm -rf build && yarn build && yarn typeorm migration:run -d ./src/dataSource.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "@types/lodash": "^4.17.15",
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.20.3",
+        "express": "^4.21.1",
+        "jsonwebtoken": "^9.0.2",
+        "lodash": "^4.17.21",
+        "pg": "^8.13.0",
+        "redis": "^4.7.0",
+        "reflect-metadata": "^0.2.2",
+        "typeorm": "^0.3.21",
+        "zod": "^3.23.8"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
+        "@types/express": "^5.0.0",
+        "@types/jsonwebtoken": "^9.0.7",
+        "@types/node": "^22.7.5",
+        "nodemon": "^3.1.7",
+        "pre-commit": "^1.2.2",
+        "rimraf": "^6.0.1",
+        "ts-node": "^10.9.2",
+        "typescript": "5.5.0"
+    }
+}

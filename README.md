@@ -1,1 +1,1 @@
-# posify-be
+# store-managerment-be
