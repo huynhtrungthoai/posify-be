@@ -1,20 +1,18 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-export enum RoleEnumType {
-    USER = 'user',
-    ADMIN = 'admin',
-}
-
 @Entity()
-export class Role {
+export class Shift {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    name: string;
+    @Column('text', { array: true })
+    working_day_ids: string[];
 
     @Column()
-    code: string;
+    store_code: string;
+
+    @Column()
+    user_id: string;
 
     @Column()
     desc: string;

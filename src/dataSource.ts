@@ -1,5 +1,12 @@
 import { DataSource } from 'typeorm';
 import { User } from './entity/User';
+import { PaymentMethod } from './entity/PaymentMethod';
+import { Product } from './entity/Product';
+import { Role } from './entity/Role';
+import { Shift } from './entity/Shift';
+import { Store } from './entity/Store';
+import { TimeKeeping } from './entity/TimeKeeping';
+import { WorkingDay } from './entity/WorkingDay';
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
@@ -12,12 +19,11 @@ export const AppDataSource = new DataSource({
     password: '123456',
     database: 'posify-db',
     // =======
-    entities: [User],
-
+    entities: [User, PaymentMethod, Product, Role, Shift, Store, TimeKeeping, WorkingDay],
     synchronize: true,
     logging: false,
     // migrationsTableName: 'migration',
-
+    // migrationsRun: true,
     // entities: ['src/entities/**/*.entity{.ts,.js}'],
     migrations: ['src/migrations/**/*{.ts,.js}'],
     // subscribers: ['src/subscribers/**/*{.ts,.js}'],

@@ -32,13 +32,16 @@ export class User {
     name: string;
 
     @Column({ type: 'varchar' })
-    avatar: string;
+    avatar_url: string;
 
     @Column({ length: 11, type: 'varchar' })
     phone: string;
 
     @Column({ length: 11, type: 'varchar' })
-    roles: string[];
+    store_codes: string[];
+
+    @Column({ length: 11, type: 'varchar' })
+    role_codes: string[];
 
     @CreateDateColumn()
     created_at: Date;

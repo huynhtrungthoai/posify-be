@@ -13,8 +13,9 @@
         "build": "rimraf dist && tsc",
         "ts.check": "tsc --project tsconfig.json",
         "add-build": "git add dist",
-        "migrate": "rm -rf build && yarn build && yarn typeorm migration:generate ./src/migrations/user -d ./src/dataSource.ts",
-        "db:push": "rm -rf build && yarn build && yarn typeorm migration:run -d ./src/dataSource.ts"
+        "migrate": "rm -rf build && yarn build && yarn typeorm migration:generate ./src/migrations/role",
+        "db:push": "rm -rf build && yarn build && yarn typeorm migration:run -d ./src/dataSource.ts",
+        "generate:migrate": "typeorm migration:create ./src/migrations/role"
     },
     "keywords": [],
     "author": "",

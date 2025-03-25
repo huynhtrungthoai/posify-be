@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Store {
+export class PaymentMethod {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -9,28 +9,19 @@ export class Store {
     name: string;
 
     @Column()
-    code: string;
+    store_code: string;
 
     @Column()
-    hotline: string;
+    card_number: string;
 
     @Column()
-    address: string;
+    card_name: string;
 
     @Column()
-    is_main: boolean;
+    card_bank: string;
 
     @Column()
     status: string;
-
-    @Column()
-    logo_url: string;
-
-    @Column()
-    banner_url: string;
-
-    @Column()
-    website_url: string;
 
     @Column()
     desc: string;

@@ -1,7 +1,4 @@
 "use strict";
-// import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-// import { Length, IsNotEmpty } from 'class-validator';
-// import * as bcrypt from 'bcryptjs';
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -45,34 +42,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.RoleEnumType = void 0;
-// @Entity()
-// @Unique(['username'])
-// export class User {
-//     @PrimaryGeneratedColumn()
-//     id: number;
-//     @Column()
-//     @Length(4, 20)
-//     username: string;
-//     @Column()
-//     @Length(4, 100)
-//     password: string;
-//     @Column()
-//     @IsNotEmpty()
-//     role: string;
-//     @Column()
-//     @CreateDateColumn()
-//     createdAt: Date;
-//     @Column()
-//     @UpdateDateColumn()
-//     updatedAt: Date;
-//     hashPassword() {
-//         this.password = bcrypt.hashSync(this.password, 8);
-//     }
-//     checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
-//         return bcrypt.compareSync(unencryptedPassword, this.password);
-//     }
-// }
-// 22222
 const typeorm_1 = require("typeorm");
 const _bcrypt = __importStar(require("bcryptjs"));
 const _crypto = __importStar(require("crypto"));
@@ -131,7 +100,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar' }),
     __metadata("design:type", String)
-], User.prototype, "avatar", void 0);
+], User.prototype, "avatar_url", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 11, type: 'varchar' }),
     __metadata("design:type", String)
@@ -139,7 +108,11 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ length: 11, type: 'varchar' }),
     __metadata("design:type", Array)
-], User.prototype, "roles", void 0);
+], User.prototype, "store_codes", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 11, type: 'varchar' }),
+    __metadata("design:type", Array)
+], User.prototype, "role_codes", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
@@ -151,16 +124,4 @@ __decorate([
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);
-// import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-// @Entity()
-// export class User {
-//     @PrimaryGeneratedColumn()
-//     id: number;
-//     @Column()
-//     name: string;
-//     @Column()
-//     email: string;
-//     @Column()
-//     password: string;
-// }
 //# sourceMappingURL=User.js.map

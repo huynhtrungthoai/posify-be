@@ -1,7 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum RoleEnumType {
+    USER = 'user',
+    ADMIN = 'admin',
+}
+
 @Entity()
-export class Store {
+export class Product {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -9,29 +14,26 @@ export class Store {
     name: string;
 
     @Column()
-    code: string;
+    sku: string;
 
     @Column()
-    hotline: string;
-
-    @Column()
-    address: string;
-
-    @Column()
-    is_main: boolean;
-
-    @Column()
-    status: string;
-
-    @Column()
-    logo_url: string;
-
-    @Column()
-    banner_url: string;
-
-    @Column()
-    website_url: string;
+    is_ingredient: string;
 
     @Column()
     desc: string;
+
+    @Column()
+    image_url: string;
+
+    @Column()
+    cost: string;
+
+    @Column()
+    price: string;
+
+    @Column()
+    inventory: string;
+
+    @Column()
+    type: string;
 }
