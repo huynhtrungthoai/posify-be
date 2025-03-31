@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ErrorResponse, UnauthorizedResponse } from '../helpers/appError';
-import * as dotenv from 'dotenv';
-import * as jwt from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import { UserService } from '../services';
-dotenv.config();
 
 const TOKEN_KEY = process.env.TOKEN_KEY;
 export const authentication = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +16,7 @@ export const authentication = async (req: Request, res: Response, next: NextFunc
 
         let decoded;
         try {
-            decoded = jwt.verify(accessToken, TOKEN_KEY) as { id: string };
+            decoded = verify(accessToken, TOKEN_KEY) as { id: string };
         } catch (err) {
             if (err.name === 'JsonWebTokenError') {
                 UnauthorizedResponse(res, 'Token không hợp lệ.');

@@ -10,18 +10,18 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
-        "baseUrl": "./src",
+        "baseUrl": "src",
         "paths": {
-            "@controllers": ["./src/controllers"],
-            "@entity": ["./src/entity"],
-            "@helpers": ["./src/helpers"],
-            "@middleware": ["./src/middleware"],
-            "@migrations": ["./src/migrations"],
-            "@routes": ["./src/routes"],
-            "@schemas": ["./src/schemas"],
-            "@services": ["./src/services"]
+            "controllers": ["./src/controllers"],
+            "entity": ["./src/entity"],
+            "helpers": ["./src/helpers"],
+            "middleware": ["./src/middleware"],
+            "migrations": ["./src/migrations"],
+            "routes": ["./src/routes"],
+            "schemas": ["./src/schemas"],
+            "services": ["./src/services"]
         }
     },
 
-    "include": ["./src/**/*", "./src/migrations/**/*.ts"]
+    "include": ["**/*.ts", "**/*.js"]
 }

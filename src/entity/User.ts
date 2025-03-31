@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import * as _bcrypt from 'bcryptjs';
-import * as _crypto from 'crypto';
+import { hash, compare } from 'bcryptjs';
+import { randomBytes, createHash } from 'crypto';
 import { TypeRole } from './Role';
 
 @Entity()
@@ -47,16 +47,16 @@ export class User {
     updated_at: Date;
 
     static async hashPassword(password: string) {
-        return await _bcrypt.hash(password, 12);
+        return await hash(password, 12);
     }
 
     static async comparePasswords(candidatePassword: string, hashedPassword: string) {
-        return await _bcrypt.compare(candidatePassword, hashedPassword);
+        return await compare(candidatePassword, hashedPassword);
     }
 
     static createVerificationCode() {
-        const verificationCode = _crypto.randomBytes(32).toString('hex');
-        const hashedVerificationCode = _crypto.createHash('sha256').update(verificationCode).digest('hex');
+        const verificationCode = randomBytes(32).toString('hex');
+        const hashedVerificationCode = createHash('sha256').update(verificationCode).digest('hex');
         return { verificationCode, hashedVerificationCode };
     }
 }

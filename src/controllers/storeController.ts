@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
-import * as dotenv from 'dotenv';
 import { BadRequestResponse, ErrorResponse, SuccessResponse } from '../helpers/appError';
-import * as jwt from 'jsonwebtoken';
-import { TOKEN_KEY } from './userController';
+import { verify } from 'jsonwebtoken';
 import { StoreService } from '../services';
-dotenv.config();
+import { AppConfig } from '../helpers/config';
 
 const getStores = async (_req: Request, res: Response) => {
     try {
@@ -37,7 +35,7 @@ const createStore = async (req: Request, res: Response) => {
             return;
         }
 
-        const decoded_token = jwt.verify(access_token, TOKEN_KEY) as { id: string };
+        const decoded_token = verify(access_token, AppConfig.TOKEN_KEY) as { id: string };
 
         // Create a new store
         const store = await StoreService.create({

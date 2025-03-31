@@ -1,15 +1,15 @@
 {
     "name": "store-manager-api",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "main.ts",
     "pre-commit": [
         "ts.check",
         "build",
         "add-build"
     ],
     "scripts": {
-        "start": "nodemon src/index.ts",
-        "start1": "nodemon --exec ts-node src/index.ts",
+        "start": "nodemon src/main.ts",
+        "start1": "nodemon --exec ts-node src/main.ts",
         "build": "rimraf dist && tsc",
         "ts.check": "tsc --project tsconfig.json",
         "add-build": "git add dist",

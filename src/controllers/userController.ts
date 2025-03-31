@@ -1,16 +1,10 @@
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import * as dotenv from 'dotenv';
 import { BadRequestResponse, ErrorResponse, SuccessResponse } from '../helpers/appError';
 import { UserService } from '../services';
-import { TypeRole } from 'entity/Role';
 import { omit } from 'lodash';
-dotenv.config();
-
-const SALT_ROUND = Number(process.env.BCRYPT_SALT_ROUND);
-export const TOKEN_KEY = process.env.TOKEN_KEY;
-const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
+import { AppConfig } from '../helpers/config';
 
 const register = async (req: Request, res: Response) => {
     const { name, email, verified, phone, role, password, avatar_url } = req.body;
@@ -28,7 +22,7 @@ const register = async (req: Request, res: Response) => {
             return;
         }
 
-        const salt = await bcrypt.genSalt(SALT_ROUND);
+        const salt = await bcrypt.genSalt(AppConfig.SALT_ROUND);
         const hashPassword = await bcrypt.hash(password, salt);
         const user = UserService.create({
             name,
@@ -67,8 +61,8 @@ const login = async (req: Request, res: Response) => {
         }
 
         const payload = { id: currentUser.id, name: currentUser.name, email: currentUser.email };
-        const access_token = jwt.sign(payload, TOKEN_KEY, { expiresIn: '1d' });
-        const refresh_token = jwt.sign(payload, REFRESH_TOKEN_KEY, { expiresIn: '7d' });
+        const access_token = jwt.sign(payload, AppConfig.TOKEN_KEY, { expiresIn: '1d' });
+        const refresh_token = jwt.sign(payload, AppConfig.REFRESH_TOKEN_KEY, { expiresIn: '7d' });
         SuccessResponse(res, { access_token, refresh_token });
         return;
     } catch (err) {
@@ -123,7 +117,7 @@ const getMe = async (req: Request, res: Response) => {
     }
 
     try {
-        const decoded = jwt.verify(access_token, TOKEN_KEY) as { id: string };
+        const decoded = jwt.verify(access_token, AppConfig.TOKEN_KEY) as { id: string };
         const user = await UserService.findOne({ id: Number(decoded.id) });
 
         if (!user) {

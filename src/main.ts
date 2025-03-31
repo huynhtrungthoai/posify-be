@@ -1,19 +1,13 @@
 import 'reflect-metadata';
 import express from 'express';
-import * as bodyParser from 'body-parser';
-
-import UserRouter from './routes/userRoute';
-import StoreRouter from './routes/storeRoute';
-
+import * as dotenv from 'dotenv';
 import { AppDataSource } from './dataSource';
+import router from './routes';
+dotenv.config();
 
 const app = express();
 
-app.use(bodyParser.json());
-
-app.use(UserRouter);
-app.use(StoreRouter);
-
+app.use(router);
 AppDataSource.connect()
     .then(() => {
         app.listen(process.env.PORT || 3000, () => {
