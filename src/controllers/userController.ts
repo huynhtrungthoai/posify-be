@@ -10,7 +10,7 @@ const SALT_ROUND = Number(process.env.BCRYPT_SALT_ROUND);
 const TOKEN_KEY = process.env.TOKEN_KEY;
 const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
 
-export const register = async (req: Request, res: Response) => {
+const register = async (req: Request, res: Response) => {
     const { name, email, verified, phone, role, password } = req.body;
 
     // Validate input
@@ -48,7 +48,7 @@ export const register = async (req: Request, res: Response) => {
     }
 };
 
-export const login = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {
@@ -76,7 +76,7 @@ export const login = async (req: Request, res: Response) => {
     }
 };
 
-export const getUserProfile = async (req: Request, res: Response) => {
+const getUserProfile = async (req: Request, res: Response) => {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
@@ -100,4 +100,10 @@ export const getUserProfile = async (req: Request, res: Response) => {
         ErrorResponse(res, err.message);
         return;
     }
+};
+
+export const UserController = {
+    register,
+    login,
+    getUserProfile,
 };

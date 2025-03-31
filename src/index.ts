@@ -3,7 +3,7 @@ import express from 'express';
 import * as bodyParser from 'body-parser';
 
 import UserRouter from './routes/userRoute';
-// import AuthRouter from './routes/authRoute';
+import StoreRouter from './routes/storeRoute';
 
 import { AppDataSource } from './dataSource';
 
@@ -12,7 +12,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(UserRouter);
-// app.use(AuthRouter);
+app.use(StoreRouter);
 
 AppDataSource.connect()
     .then(() => {

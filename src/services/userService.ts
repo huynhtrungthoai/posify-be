@@ -1,6 +1,4 @@
 import { AppDataSource } from '../dataSource';
-import { signJwt } from '../helpers/jwt';
-import redisClient from '../helpers/connectRedis';
 import { User } from '../entity/User';
 
 const userRepository = AppDataSource.getRepository(User);
@@ -19,21 +17,4 @@ export const findUserById = async (userId: number) => {
 
 export const findUser = async (query: Object) => {
     return await userRepository.findOneBy(query);
-};
-export const signTokens = async (user: User) => {
-    // 1. Create Session
-    // redisClient.set(user.id, JSON.stringify(user), {
-    //     EX: config.get<number>('redisCacheExpiresIn') * 60,
-    // });
-
-    // 2. Create Access and Refresh tokens
-    const access_token = signJwt({ user_profile: user }, 'TOKEN_KEY', {
-        expiresIn: `${process.env.accessTokenExpiresIn}m`,
-    });
-
-    const refresh_token = signJwt({ user_profile: user }, 'REFRESH_TOKEN_KEY', {
-        expiresIn: `${process.env.refreshTokenExpiresIn}m`,
-    });
-
-    return { access_token, refresh_token };
 };
