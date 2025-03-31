@@ -1,1 +1,1 @@
-# store-managerment-be
+# POSify
