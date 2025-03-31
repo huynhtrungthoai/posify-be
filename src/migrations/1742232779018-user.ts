@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import * as _bcrypt from 'bcryptjs';
+import { hash } from 'bcryptjs';
 import { TypeRole } from '../entity/Role';
 
 export class User1742232779018 implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
-        const adminPassword = await _bcrypt.hash('admin123', 12);
+        const adminPassword = await hash('admin123', 12);
 
         await queryRunner.query(`
             INSERT INTO "user" (name, email, password, role, verified, avatar_url, phone, store_codes, role_codes, created_at, updated_at)

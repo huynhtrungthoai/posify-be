@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
+import { genSalt, hash, compare } from 'bcryptjs';
+import { sign, verify } from 'jsonwebtoken';
 import { BadRequestResponse, ErrorResponse, SuccessResponse } from '../helpers/appError';
 import { UserService } from '../services';
 import { omit } from 'lodash';
@@ -22,8 +22,8 @@ const register = async (req: Request, res: Response) => {
             return;
         }
 
-        const salt = await bcrypt.genSalt(AppConfig.SALT_ROUND);
-        const hashPassword = await bcrypt.hash(password, salt);
+        const salt = await genSalt(AppConfig.SALT_ROUND);
+        const hashPassword = await hash(password, salt);
         const user = UserService.create({
             name,
             email,
@@ -54,15 +54,15 @@ const login = async (req: Request, res: Response) => {
             return;
         }
 
-        const isSuccess = await bcrypt.compare(password, currentUser.password);
+        const isSuccess = await compare(password, currentUser.password);
         if (!isSuccess) {
             BadRequestResponse(res, 'Email hoặc password không hợp lệ.');
             return;
         }
 
         const payload = { id: currentUser.id, name: currentUser.name, email: currentUser.email };
-        const access_token = jwt.sign(payload, AppConfig.TOKEN_KEY, { expiresIn: '1d' });
-        const refresh_token = jwt.sign(payload, AppConfig.REFRESH_TOKEN_KEY, { expiresIn: '7d' });
+        const access_token = sign(payload, AppConfig.TOKEN_KEY, { expiresIn: '1d' });
+        const refresh_token = sign(payload, AppConfig.REFRESH_TOKEN_KEY, { expiresIn: '7d' });
         SuccessResponse(res, { access_token, refresh_token });
         return;
     } catch (err) {
@@ -117,7 +117,7 @@ const getMe = async (req: Request, res: Response) => {
     }
 
     try {
-        const decoded = jwt.verify(access_token, AppConfig.TOKEN_KEY) as { id: string };
+        const decoded = verify(access_token, AppConfig.TOKEN_KEY) as { id: string };
         const user = await UserService.findOne({ id: Number(decoded.id) });
 
         if (!user) {
