@@ -3,18 +3,26 @@ import { User } from '../entity/User';
 
 const userRepository = AppDataSource.getRepository(User);
 
-export const createUser = async (input: Partial<User>) => {
+const create = async (input: Partial<User>) => {
     return await userRepository.save(userRepository.create(input));
 };
 
-export const findUserByEmail = async ({ email }: { email: string }) => {
-    return await userRepository.findOneBy({ email });
+const update = async (id: string, store: Partial<User>) => {
+    await userRepository.update(id, store);
+    return await userRepository.findOne({ where: { id: Number(id) } });
 };
 
-export const findUserById = async (userId: number) => {
-    return await userRepository.findOneBy({ id: userId });
-};
-
-export const findUser = async (query: Object) => {
+const findOne = async (query: Object) => {
     return await userRepository.findOneBy(query);
+};
+
+const findAll = async () => {
+    return await userRepository.find();
+};
+
+export const UserService = {
+    create,
+    update,
+    findOne,
+    findAll,
 };

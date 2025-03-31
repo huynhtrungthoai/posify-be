@@ -1,20 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
-import AppError, { ErrorResponse, UnauthorizedResponse } from '../helpers/appError';
-import { verifyJwt } from '../helpers/jwt';
-import redisClient from '../helpers/connectRedis';
-import { findUser, findUserById } from '../services/userService';
+import { ErrorResponse, UnauthorizedResponse } from '../helpers/appError';
 import * as dotenv from 'dotenv';
 import * as jwt from 'jsonwebtoken';
+import { UserService } from '../services';
 dotenv.config();
 
 const TOKEN_KEY = process.env.TOKEN_KEY;
-export const requireAuthentication = async (req: Request, res: Response, next: NextFunction) => {
+export const authentication = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
         const accessToken = authHeader?.startsWith('Bearer') ? authHeader.split(' ')[1] : req.cookies?.access_token;
 
         if (!accessToken) {
-            UnauthorizedResponse(res, 'You are not logged in');
+            UnauthorizedResponse(res, 'Vui lòng đăng nhập.');
             return;
         }
 
@@ -23,19 +21,19 @@ export const requireAuthentication = async (req: Request, res: Response, next: N
             decoded = jwt.verify(accessToken, TOKEN_KEY) as { id: string };
         } catch (err) {
             if (err.name === 'JsonWebTokenError') {
-                UnauthorizedResponse(res, 'Invalid token');
+                UnauthorizedResponse(res, 'Token không hợp lệ.');
             } else if (err.name === 'TokenExpiredError') {
-                UnauthorizedResponse(res, 'Token has expired');
+                UnauthorizedResponse(res, 'Token đã hết hạn, vui lòng đăng nhập lại.');
             } else {
-                ErrorResponse(res, 'Failed to authenticate token');
+                ErrorResponse(res, 'Lỗi xác thực token');
             }
             return;
         }
 
-        const user = await findUser({ id: Number(decoded?.id) });
+        const user = await UserService.findOne({ id: Number(decoded?.id) });
 
         if (!user) {
-            UnauthorizedResponse(res, 'User not found or session has expired');
+            UnauthorizedResponse(res, 'Không tìm thấy người dùng hoặc token đã hết hạn.');
             return;
         }
 
@@ -44,7 +42,6 @@ export const requireAuthentication = async (req: Request, res: Response, next: N
 
         next();
     } catch (err: any) {
-        console.error('Error in deserializeUser:', err);
         ErrorResponse(res, 'An unexpected error occurred');
         return;
     }

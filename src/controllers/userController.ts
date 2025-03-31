@@ -3,15 +3,17 @@ import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import { BadRequestResponse, ErrorResponse, SuccessResponse } from '../helpers/appError';
-import { createUser, findUser } from '../services/userService';
+import { UserService } from '../services';
+import { TypeRole } from 'entity/Role';
+import { omit } from 'lodash';
 dotenv.config();
 
 const SALT_ROUND = Number(process.env.BCRYPT_SALT_ROUND);
-const TOKEN_KEY = process.env.TOKEN_KEY;
+export const TOKEN_KEY = process.env.TOKEN_KEY;
 const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
 
 const register = async (req: Request, res: Response) => {
-    const { name, email, verified, phone, role, password } = req.body;
+    const { name, email, verified, phone, role, password, avatar_url } = req.body;
 
     // Validate input
     if (!name || !email || !password) {
@@ -20,7 +22,7 @@ const register = async (req: Request, res: Response) => {
     }
 
     try {
-        const existingUser = await findUser({ email });
+        const existingUser = await UserService.findOne({ email });
         if (existingUser) {
             BadRequestResponse(res, 'Email đã tồn tại');
             return;
@@ -28,21 +30,20 @@ const register = async (req: Request, res: Response) => {
 
         const salt = await bcrypt.genSalt(SALT_ROUND);
         const hashPassword = await bcrypt.hash(password, salt);
-        const user = createUser({
+        const user = UserService.create({
             name,
             email,
             password: hashPassword,
-            role,
-            verified,
-            avatar_url: '',
-            phone,
+            role: role ?? 'USER',
+            verified: verified ?? false,
+            avatar_url: avatar_url ?? '',
+            phone: phone ?? '',
             store_codes: [],
             role_codes: [],
         });
-        SuccessResponse(res, user);
+        SuccessResponse(res, omit(user, ['password']));
         return;
     } catch (err) {
-        console.log(`🚀 ~ register ~ err:`, err);
         ErrorResponse(res, err.message);
         return;
     }
@@ -52,7 +53,7 @@ const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {
-        const currentUser = await findUser({ email });
+        const currentUser = await UserService.findOne({ email });
 
         if (!currentUser) {
             BadRequestResponse(res, 'Email hoặc password không hợp lệ.');
@@ -76,25 +77,36 @@ const login = async (req: Request, res: Response) => {
     }
 };
 
-const getUserProfile = async (req: Request, res: Response) => {
-    const token = req.headers.authorization?.split(' ')[1];
+const updateProfile = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, email, phone } = req.body;
 
-    if (!token) {
-        BadRequestResponse(res, 'Token không hợp lệ.');
+    // Validate input
+    if (!id) {
+        BadRequestResponse(res, 'User ID is required.');
+        return;
+    }
+
+    if (!name && !email && !phone) {
+        BadRequestResponse(res, 'At least one field (name, email, or phone) is required to update.');
         return;
     }
 
     try {
-        const decoded = jwt.verify(token, TOKEN_KEY) as { id: string };
-        const user = await findUser({ id: Number(decoded.id) });
-
-        if (!user) {
-            BadRequestResponse(res, 'Người dùng không tồn tại.');
+        // Check if the user exists
+        const existingUser = await UserService.findOne({ id });
+        if (!existingUser) {
+            BadRequestResponse(res, 'User does not exist.');
             return;
         }
 
-        const { id, name, email } = user;
-        SuccessResponse(res, { id, name, email });
+        // Update the user profile
+        const updatedUser = await UserService.update(id, {
+            ...existingUser,
+            ...req.body,
+        });
+
+        SuccessResponse(res, omit(updatedUser, ['password']));
         return;
     } catch (err) {
         ErrorResponse(res, err.message);
@@ -102,8 +114,34 @@ const getUserProfile = async (req: Request, res: Response) => {
     }
 };
 
+const getMe = async (req: Request, res: Response) => {
+    const access_token = req.headers.authorization?.split(' ')[1];
+
+    if (!access_token) {
+        BadRequestResponse(res, 'Token không hợp lệ.');
+        return;
+    }
+
+    try {
+        const decoded = jwt.verify(access_token, TOKEN_KEY) as { id: string };
+        const user = await UserService.findOne({ id: Number(decoded.id) });
+
+        if (!user) {
+            BadRequestResponse(res, 'Người dùng không tồn tại.');
+            return;
+        }
+
+        const { id, name, email } = user;
+        SuccessResponse(res, omit(user, ['password']));
+        return;
+    } catch (err) {
+        ErrorResponse(res, err.message);
+        return;
+    }
+};
 export const UserController = {
     register,
     login,
-    getUserProfile,
+    getMe,
+    updateProfile,
 };

@@ -1,5 +1,13 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum TypeStoreStatus {
+    ACTIVE = 'ACTIVE',
+    IN_ACTIVE = 'IN_ACTIVE',
+    EXPIRED = 'EXPIRED',
+    DELETED = 'DELETED',
+    BLOCKED = 'BLOCKED',
+}
+
 @Entity()
 export class Store {
     @PrimaryGeneratedColumn()
@@ -20,8 +28,12 @@ export class Store {
     @Column()
     is_main: boolean;
 
-    @Column()
-    status: string;
+    @Column({
+        type: 'enum',
+        enum: TypeStoreStatus,
+        default: TypeStoreStatus.ACTIVE,
+    })
+    status: TypeStoreStatus.ACTIVE;
 
     @Column()
     logo_url: string;
@@ -34,4 +46,7 @@ export class Store {
 
     @Column()
     desc: string;
+
+    @Column()
+    user_id: string;
 }

@@ -34,10 +34,10 @@ export class User {
     @Column({ length: 11, type: 'varchar' })
     phone: string;
 
-    @Column({ length: 11, type: 'varchar' })
+    @Column({ type: 'simple-array' })
     store_codes: string[];
 
-    @Column({ length: 11, type: 'varchar' })
+    @Column({ type: 'simple-array' })
     role_codes: string[];
 
     @CreateDateColumn()
