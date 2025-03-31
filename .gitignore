@@ -26,4 +26,6 @@ replay_pid*
 
 /node_modules
 /dist
+*.lock
+.env
 
