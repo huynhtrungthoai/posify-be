@@ -8,20 +8,35 @@ import * as jwt from 'jsonwebtoken';
 dotenv.config();
 
 const TOKEN_KEY = process.env.TOKEN_KEY;
-export const deserializeUser = async (req: Request, res: Response, next: NextFunction) => {
+export const requireAuthentication = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
         const accessToken = authHeader?.startsWith('Bearer') ? authHeader.split(' ')[1] : req.cookies?.access_token;
 
         if (!accessToken) {
             UnauthorizedResponse(res, 'You are not logged in');
+            return;
         }
 
-        const decoded = jwt.verify(accessToken, TOKEN_KEY) as { id: string };
+        let decoded;
+        try {
+            decoded = jwt.verify(accessToken, TOKEN_KEY) as { id: string };
+        } catch (err) {
+            if (err.name === 'JsonWebTokenError') {
+                UnauthorizedResponse(res, 'Invalid token');
+            } else if (err.name === 'TokenExpiredError') {
+                UnauthorizedResponse(res, 'Token has expired');
+            } else {
+                ErrorResponse(res, 'Failed to authenticate token');
+            }
+            return;
+        }
+
         const user = await findUser({ id: Number(decoded?.id) });
 
-        if (!user || !decoded) {
-            UnauthorizedResponse(res, 'Invalid token or session has expired');
+        if (!user) {
+            UnauthorizedResponse(res, 'User not found or session has expired');
+            return;
         }
 
         // Add user to res.locals
@@ -29,6 +44,8 @@ export const deserializeUser = async (req: Request, res: Response, next: NextFun
 
         next();
     } catch (err: any) {
-        ErrorResponse(res, err.message);
+        console.error('Error in deserializeUser:', err);
+        ErrorResponse(res, 'An unexpected error occurred');
+        return;
     }
 };

@@ -1,10 +1,7 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import * as _bcrypt from 'bcryptjs';
 import * as _crypto from 'crypto';
-export enum RoleEnumType {
-    USER = 'user',
-    ADMIN = 'admin',
-}
+import { TypeRole } from './Role';
 
 @Entity()
 export class User {
@@ -20,10 +17,10 @@ export class User {
 
     @Column({
         type: 'enum',
-        enum: RoleEnumType,
-        default: RoleEnumType.USER,
+        enum: TypeRole,
+        default: TypeRole.USER,
     })
-    role: RoleEnumType.USER;
+    role: TypeRole.USER;
 
     @Column({ type: 'boolean', default: false })
     verified: boolean;

@@ -16,7 +16,7 @@ export function ErrorResponse(res: Response, message: string | undefined = undef
     let data = {
         error: { message: message || 'Internal Server Error' },
     };
-    res.status(status).send(data);
+    return res.status(status).send(data);
 }
 
 export function SuccessResponse(res: Response, data: any, status: number = 200) {

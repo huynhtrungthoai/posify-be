@@ -11,13 +11,19 @@ const TOKEN_KEY = process.env.TOKEN_KEY;
 const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
 
 export const register = async (req: Request, res: Response) => {
-    const { name, email, password } = req.body;
+    const { name, email, verified, phone, role, password } = req.body;
+
+    // Validate input
+    if (!name || !email || !password) {
+        BadRequestResponse(res, 'Name, email, and password are required.');
+        return;
+    }
 
     try {
         const existingUser = await findUser({ email });
-
         if (existingUser) {
             BadRequestResponse(res, 'Email đã tồn tại');
+            return;
         }
 
         const salt = await bcrypt.genSalt(SALT_ROUND);
@@ -26,10 +32,19 @@ export const register = async (req: Request, res: Response) => {
             name,
             email,
             password: hashPassword,
+            role,
+            verified,
+            avatar_url: '',
+            phone,
+            store_codes: [],
+            role_codes: [],
         });
         SuccessResponse(res, user);
+        return;
     } catch (err) {
+        console.log(`🚀 ~ register ~ err:`, err);
         ErrorResponse(res, err.message);
+        return;
     }
 };
 
@@ -41,19 +56,23 @@ export const login = async (req: Request, res: Response) => {
 
         if (!currentUser) {
             BadRequestResponse(res, 'Email hoặc password không hợp lệ.');
+            return;
         }
 
         const isSuccess = await bcrypt.compare(password, currentUser.password);
         if (!isSuccess) {
             BadRequestResponse(res, 'Email hoặc password không hợp lệ.');
+            return;
         }
 
         const payload = { id: currentUser.id, name: currentUser.name, email: currentUser.email };
-        const token = jwt.sign(payload, TOKEN_KEY, { expiresIn: '1d' });
-        const refreshToken = jwt.sign(payload, REFRESH_TOKEN_KEY, { expiresIn: '7d' });
-        SuccessResponse(res, { token, refreshToken });
+        const access_token = jwt.sign(payload, TOKEN_KEY, { expiresIn: '1d' });
+        const refresh_token = jwt.sign(payload, REFRESH_TOKEN_KEY, { expiresIn: '7d' });
+        SuccessResponse(res, { access_token, refresh_token });
+        return;
     } catch (err) {
         ErrorResponse(res, err.message);
+        return;
     }
 };
 
@@ -62,6 +81,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 
     if (!token) {
         BadRequestResponse(res, 'Token không hợp lệ.');
+        return;
     }
 
     try {
@@ -70,11 +90,14 @@ export const getUserProfile = async (req: Request, res: Response) => {
 
         if (!user) {
             BadRequestResponse(res, 'Người dùng không tồn tại.');
+            return;
         }
 
         const { id, name, email } = user;
         SuccessResponse(res, { id, name, email });
+        return;
     } catch (err) {
         ErrorResponse(res, err.message);
+        return;
     }
 };
