@@ -1,13 +1,15 @@
 import { Router } from 'express';
-import * as bodyParser from 'body-parser';
+import { json } from 'body-parser';
 
-import UserRouter from '../routes/userRoute';
-import StoreRouter from '../routes/storeRoute';
+import { UserRouter } from './userRoute';
+import { StoreRouter } from './storeRoute';
+import { ProductRouter } from './productRoute';
 
 const router = Router();
 
-router.use(bodyParser.json());
+router.use(json());
 router.use(UserRouter);
 router.use(StoreRouter);
+router.use(ProductRouter);
 
 export default router;

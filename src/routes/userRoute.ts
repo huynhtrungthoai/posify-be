@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authentication } from '../middleware/authentication';
 import { UserController } from '../controllers';
+import { createUserSchema, loginUserSchema } from 'schemas/user.schema';
 
 const router = Router();
 
@@ -11,4 +12,4 @@ router.post(`/${ROUTE_PREFIX}/login`, UserController.login);
 router.get(`/${ROUTE_PREFIX}/me`, authentication, UserController.getMe);
 router.patch(`/${ROUTE_PREFIX}/user/:id`, authentication, UserController.updateProfile);
 
-export default router;
+export const UserRouter = router;

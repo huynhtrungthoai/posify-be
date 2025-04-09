@@ -110,6 +110,7 @@ const updateProfile = async (req: Request, res: Response) => {
 
 const getMe = async (req: Request, res: Response) => {
     const access_token = req.headers.authorization?.split(' ')[1];
+    console.log(`🚀 ~ getMe ~ access_token:`, access_token);
 
     if (!access_token) {
         BadRequestResponse(res, 'Token không hợp lệ.');

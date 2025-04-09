@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { BadRequestResponse, ErrorResponse, SuccessResponse } from '../helpers/appError';
 import { verify } from 'jsonwebtoken';
-import { StoreService } from '../services';
 import { AppConfig } from '../helpers/config';
+import { StoreService } from '../services';
 
 const getStores = async (_req: Request, res: Response) => {
     try {

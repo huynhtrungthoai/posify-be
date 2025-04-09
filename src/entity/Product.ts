@@ -17,9 +17,6 @@ export class Product {
     sku: string;
 
     @Column()
-    is_ingredient: string;
-
-    @Column()
     desc: string;
 
     @Column()
@@ -36,4 +33,13 @@ export class Product {
 
     @Column()
     type: string;
+
+    @Column()
+    is_ingredient: string;
+
+    @Column({ type: 'simple-array' })
+    ingredients: string[];
+
+    @Column({ type: 'simple-array' })
+    store_ids: string[];
 }

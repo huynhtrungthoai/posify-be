@@ -10,4 +10,4 @@ router.get(`/${ROUTE_PREFIX}/stores`, authentication, StoreController.getStores)
 router.post(`/${ROUTE_PREFIX}/store`, authentication, StoreController.createStore);
 router.patch(`/${ROUTE_PREFIX}/store/:id`, authentication, StoreController.updateStore);
 
-export default router;
+export const StoreRouter = router;
